@@ -5,7 +5,7 @@
 int p;
 int i;
 int globalmax=0;
-int final[4];
+
 
 void spmd(){
 	bsp_begin(p);
