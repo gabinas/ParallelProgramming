@@ -12,11 +12,12 @@ void spmd(){
 	int max=0;
 	int *m;
 	m=&max;
-	
+	int elements
 	/*getting random values*/
 int input[10];
 int globalmax=0;
-for(i=0;i<sizeof(input);i++){
+int elements = sizeof(input)/sizeof(int);
+for(i=0;i<elements;i++){
 	input[i]= rand() % 20;
 }
 /*Printing values from each processor*/
@@ -44,7 +45,7 @@ bsp_push_reg(Maxs,p*sizeof(int));
 bsp_sync();
 
 /*finding max in each processor*/
-for(i=0;i<11;i++){
+for(i=0;i<elements;i++){
 	if(input[i]>max){
 	max=input[i];
 	printf("found new max processor %d and the new max is %d\n",bsp_pid(),input[i]);fflush(stdout);
