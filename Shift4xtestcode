@@ -1,0 +1,13 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include "include/mcbsp.h"
+#include <string.h>
+
+
+
+/*This will test to see that the processor recived the same value that it started with*/
+void bsp_shifttest(int num){
+int value=bsp_pid();
+if(value==num){
+	printf("The 4 shift worked\n");
+}
