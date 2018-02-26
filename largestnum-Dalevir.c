@@ -4,15 +4,14 @@
 #include <string.h>
 int p;
 int i;
-int globalmax=0;
+
 
 
 void spmd(){
 	bsp_begin(p);
 	int max=0;
-	int *m;
-	m=&max;
-	int elements
+	
+	
 	/*getting random values*/
 int input[10];
 int globalmax=0;
@@ -57,7 +56,7 @@ for(i=0;i<elements;i++){
 printf("from processor %d max value is %d\n",bsp_pid(),max);fflush(stdout);
 
 /*sending max value to processor 0*/
-bsp_put(0,m,Maxs,bsp_pid(),sizeof(int));
+bsp_put(0,&max,Maxs,bsp_pid(),sizeof(int));
 bsp_pop_reg(Maxs); /*deregistering variable*/
 bsp_sync();
 
@@ -82,7 +81,7 @@ printf("how many processors do you want to use");fflush(stdout);
 scanf("%d",&p);
  
  spmd();
- printf("this is the global max %d\n",globalmax);
+ 
  return 0;
  }
  
