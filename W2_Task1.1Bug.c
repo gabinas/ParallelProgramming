@@ -1,16 +1,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "include/mcbsp.h"
-#include <time.h>
 unsigned int P;
 
 int * createArray(int size) {
 int m = size;
 int data[m];
 int *dataAddress = data;
-time_t t;
 for (int i = 0; i < m; i++){
-	 srand((unsigned) time(&t));
 	int num = rand()%51;
 	data[i] = num;
 		
@@ -19,19 +16,20 @@ return dataAddress;
 	
 }
 void  toString(int pID, int data[], int size){
-	//int size = sizeof(data)/sizeof(int);
-	printf( "Array from processor %d,size= %d. \n", pID, size);
+	//int size = sizeof(data)/sizeof(int
+	int max = data[0];
+	printf( "\n Array from processor %d,size= %d. \n", pID, size);
 	for (int i = 0; i < size; i++){
 		printf("%d ",data[i]);
 	}
-	printf( "\n");
+	printf("\n");
 
 }
 //Find Max number from data[]
-int findMax(int pID, int data[], int size){
+int findMax(int data[], int size){
 	int max = data[0];
-	printf("First value of the array is: %d\n", max);
-	for (int i = 1; i < size; i++){
+	int i;
+	for (i = 0; i < size; i++){
 		if (data[i] > max){
 			max = data[i];
 		}
@@ -40,25 +38,15 @@ int findMax(int pID, int data[], int size){
 }
 
 void  largestNum(){
-	bsp_begin(P);
 	int size = rand()%15;
+	bsp_begin(P);
 	int s = bsp_pid();
-	int *dataRecieved;
-	dataRecieved = createArray(size);
-	int first = dataRecieved[0];
-	printf("First value of the array is: %d\n", first);
-	toString(s, dataRecieved, size);
-	int data[P];
-	int *Maxs = calloc(bsp_nprocs(), sizeof(int));
-	bsp_push_reg(Maxs, bsp_nprocs() * sizeof(int));
+	int *dataReceived;
+	dataReceived = createArray(size);
+	toString(s, dataReceived, size);
+	int max = findMax(dataReceived, size);
 	bsp_sync();
-	int max = findMax(s, dataRecieved, size);
-
-	bsp_sync();
-	
-	bsp_sync();
-	printf("Max value is %d\n", max);
-	
+	printf("\nMax value is %d\n", max);	
 	bsp_end();
 }
 
@@ -76,4 +64,3 @@ int main( int argc, char ** argv ) {
     largestNum();
     return EXIT_SUCCESS;
 }
-
