@@ -4,6 +4,8 @@
 unsigned int P;
 
 int * createArray(int size) {
+	int m = size;
+	int data[m];
 	int *dataAddress = data;
 	int i;
 	for (i = 0; i < m; i++){
