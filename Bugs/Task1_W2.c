@@ -1,3 +1,9 @@
+/*
+This code is supposed to create a local randomized array in each process and then look for the local maxima and display it. 
+Instead of finding the largest number, it displays large integer values (changes each time). 
+
+*/
+
 #include <stdlib.h>
 #include <stdio.h>
 #include "include/mcbsp.h"
