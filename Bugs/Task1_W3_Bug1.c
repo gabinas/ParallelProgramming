@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "include/mcbsp.h"
+//This bug we found looking at the array arr before and after the sync, 
+//displaying different values before and after. 
+//It also does not send the same array to the other processors, but that is not the problem reported.
 unsigned int P;
 
 int * createArray(int size) {
@@ -45,7 +48,6 @@ void naiveBroadcast(){
 	// 2
 	if(p == 0){
 		for(int i = 1; i < P; i++){
-			printf("Processor %d is trying to put!\n",bsp_pid());
 			bsp_put(i,&arr, Broad,0, n*sizeof(int));
 		}
 	} 
