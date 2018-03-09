@@ -36,12 +36,6 @@ void naiveBroadcast(){
 	bsp_sync();	//first synchronize
 	
 	// 2
-	/*
-	if(p == 0){
-		for(int i = 1; i < P; i++){
-			bsp_put(i,arr, Broad,0, n*sizeof(int));
-		}
-	} */
 	if(p!=0){
 		bsp_get(0,arr,0,Broad,n*sizeof(int));
 	}
