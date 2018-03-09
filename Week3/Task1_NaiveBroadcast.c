@@ -2,21 +2,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "include/mcbsp.h"
-//This bug we found looking at the array arr before and after the sync, 
-//displaying different values before and after. 
-//It also does not send the same array to the other processors, but that is not the problem reported.
 unsigned int P;
 
 int * createArray(int size) {
-	int data[size];
-	printf("AT LEAST IT GETS HERE \n");
-	int *dataAddress;
-	for (int i = 0; i < m; i++){
-	int num = rand()%80;
-	printf("%d\n",num);
-	data[i] = num;	
+	int *dataAddress = calloc(size, sizeof(int));
+	for (int i = 0; i < size; i++){
+		int num = rand()%50;
+		dataAddress[i] = num;
 	}
-	return dataAddress;
+	return dataAddress;	
 }
 
 void  toString(int pID, int data[], int size){
@@ -25,7 +19,6 @@ void  toString(int pID, int data[], int size){
 	for (i = 0; i < size; i++){
 		printf("%d ",data[i]);
 	}
-
 }
 
 void naiveBroadcast(){
@@ -39,24 +32,17 @@ void naiveBroadcast(){
 		arr = createArray(n);	//Populating array in p0
 	}
 	Broad = calloc(n, sizeof(int));		//Saving space for array in p1-pn
-	bsp_push_reg(Broad, n*sizeof(int));	//Storing register for dynamic access
-	if(p == 0){	//We check what the array is before the sync
-		toString(p,arr,n);
-	}		
+	bsp_push_reg(Broad, n*sizeof(int));	//Storing register for dynamic access		
 	bsp_sync();	//first synchronize
-	if(p == 0){	//We check what the array is after the sync
-		toString(p,arr,n);
-	}
+	
 	// 2
 	if(p == 0){
 		for(int i = 1; i < P; i++){
-			bsp_put(i,&arr, Broad,0, n*sizeof(int));
+			bsp_put(i,arr, Broad,0, n*sizeof(int));
 		}
 	} 
 	bsp_sync();
-	
-	toString(p,Broad,n);
-	
+		
 	bsp_end();
 }
 
