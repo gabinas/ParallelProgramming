@@ -1,0 +1,4 @@
+Error: bsp_get into unregistered memory area (0x7fc5380020d0) requested!
+Aborting due to BSP primitive call with invalid arguments.Error: bsp_get into unregistered memory area (0x7fc5300020d0) requested!
+Aborting due to BSP primitive call with invalid arguments.Error: bsp_get into unregistered memory area (0x7fc5400020d0) requested!
+Aborting due to BSP primitive call with invalid arguments.
