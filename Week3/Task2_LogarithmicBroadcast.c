@@ -32,7 +32,7 @@ void naiveBroadcast(){
 		arr = createArray(n);	//Populating array in p0
 	}
 	Broad = calloc(n, sizeof(int));		//Saving space for array in p1-pn
-	bsp_push_reg(Broad, n*sizeof(int));	//Storing register for dynamic access		
+	bsp_push_reg(arr, n*sizeof(int));	//Storing register for dynamic access		
 	bsp_sync();	//first synchronize
 	
 	// 2
