@@ -3,13 +3,6 @@
 #include "include/mcbsp.h"
 unsigned int P;
 
-/*
-This program is supposed to complete the Two-Phase broadcast. 
-However, it only goes through the first phase and doesn't complete the second one.
-Later on we fixed this by synchronizing the processors after the last loop.
-
-*/
-
 int * createArray(int size) {
 	int *dataAddress = calloc(size, sizeof(int));
 	for (int i = 0; i < size; i++){
@@ -32,7 +25,7 @@ void  twoPhase(){
 	
 	//0
 	int p = bsp_pid();
-	int n = 16;
+	int n = 8;
 	int *arr;
 	arr = calloc( n, sizeof(int));	//All arrays allocate space for array
 	if(p == 0){
@@ -44,7 +37,7 @@ void  twoPhase(){
 	
 	
 	//1: First Phase
-	int blocksize = n/P;
+	int blocksize = 2;
 	if(p == 0){	//Process 0 sends a block of size n/p to each process
 		for(int i = 0; i < P; i++){
 			bsp_put(i,&arr[i*blocksize],arr,i*blocksize*sizeof(int),blocksize*sizeof(int));
@@ -54,12 +47,10 @@ void  twoPhase(){
 	bsp_sync();
 	
 	//Second Phase
-	for(int i = 0; i < P; i++){	//Each process sends the block of size n/p to all other processes
+	for(int i = 0; i < P; i++){
 		bsp_put(i,&arr[p*blocksize],arr,p*blocksize*sizeof(int),blocksize*sizeof(int)); 
 	}
-	
-	bsp_sync();
-	
+		
 	toString(p,arr,n);
 	printf("\n");
 		
@@ -67,7 +58,7 @@ void  twoPhase(){
 }
 	
 int main( int argc, char ** argv ) {
-	printf( "How many threads do you want started? There are %d cores available. (Only multiples of 8)\n", bsp_nprocs() );
+	printf( "How many threads do you want started? There are %d cores available.\n", bsp_nprocs() );
     fflush( stdout );
     scanf( "%d", &P );
     if( P == 0 || P > bsp_nprocs() ) {
