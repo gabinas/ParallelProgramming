@@ -100,7 +100,6 @@ void naiveBroadcast(){
 	
 	}
 	Procs=Procs/2;
-	step++;
 	bsp_sync();
 	}
 	
