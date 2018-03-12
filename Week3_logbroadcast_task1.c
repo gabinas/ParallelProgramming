@@ -35,7 +35,7 @@ int datachecker(int data1[],int data2[],int size,int pid ){
 		break;
 		
 		}
-		if(data1[i]==data2[i]){
+		if(data1[i]==data2[i]){ // This is redundant its not really checking anything. The checker can just confirm that the first x amount of values in data are non zero.
 			counter++;
 		}
 		
@@ -55,14 +55,13 @@ void naiveBroadcast(){
 	bsp_begin(P);
 	int i;
 	int n = 10;	// size of arrays
-	int count=0;
 	int id = bsp_pid();
 	int *arr;		//Array for process 0
 	int *Broad;		//Array for the rest processors 
 	int key=0;
 	int *Broadpoint;
 	int Procs= P;
-	int step=1;
+	
 	bsp_push_reg(arr, n*sizeof(int));	//Storing register for dynamic access
 	if(id == 0){
 		arr = createArray(n);	//Populating array in p0
