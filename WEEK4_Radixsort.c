@@ -33,7 +33,7 @@ int * createArray(int s) {
 				break;
 			}
 		}
-		if(lock==0){
+		if(lock==0){			\\This lock is to ensure that all keys are unique.
 			dataAddress[i].key=num2;
 		}
 		}
