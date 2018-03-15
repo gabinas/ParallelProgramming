@@ -3,7 +3,7 @@
 #include "include/mcbsp.h"
 unsigned int P;
 /*
-This is a buggy file where the Segmentation fault (core dumped) error occurs when reaching qsort
+This is a buggy file where the Segmentation fault (core dumped) error occurs when reaching Create Array
 it should create an array in each processor and sort through them, but it terminates the program.
 */
 int * createArray(int pID, int size) {
@@ -16,7 +16,9 @@ int * createArray(int pID, int size) {
 	
 	
 	*/
+	
 	int *dataAddress;
+	
 	switch(pID){
 	case 0:	
 		dataAddress[0]=16;
@@ -62,7 +64,9 @@ int * createArray(int pID, int size) {
 		
 		dataAddress[i-pID*size] = dataAddress[randomIndex];
 		dataAddress[randomIndex] = temp;
-	}	
+	}
+	*/
+	
 	return dataAddress;	
 }
 
@@ -89,15 +93,15 @@ void  sort(){
 	printf("Test 4");
 	arr = createArray(p,size);
 	
-	bsp_push_reg(LS,P*size*sizeof(int));
+	//bsp_push_reg(LS,P*size*sizeof(int));
 	
-	bsp_sync();
+	//bsp_sync();
 	
 	// Local Sort
 	
-	qsort(arr, size, sizeof(int), cmpfunc);
-	toString(p,arr,size);
-	bsp_sync();
+	//qsort(arr, size, sizeof(int), cmpfunc);
+	//toString(p,arr,size);
+	//bsp_sync();
 	//Storing and sharing Local Sample
 	/*
 	bsp_sync();
