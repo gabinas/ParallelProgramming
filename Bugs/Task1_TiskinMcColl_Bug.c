@@ -65,7 +65,7 @@ int * createArray(int pID, int size) {
 		dataAddress[i-pID*size] = dataAddress[randomIndex];
 		dataAddress[randomIndex] = temp;
 	}
-	*/
+	
 	
 	return dataAddress;	
 }
