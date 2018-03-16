@@ -61,7 +61,7 @@ void radixsort(){
 	bsp_push_reg(local,size*8);
 	bsp_sync();
 	if(id==0){
-		printf("\nUSORTED:\n");
+		printf("\nUNSORTED:\n");
 		for(i=0;i<size;i++){
 			
 		printf(" [key,value] [%d,%d]\n",data[i].key,data[i].value);
