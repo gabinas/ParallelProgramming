@@ -9,13 +9,22 @@ However, it only goes through the first phase and doesn't complete the second on
 Later on we fixed this by synchronizing the processors after the last loop.
 
 */
-
+/*
 typedef struct node{
 	int data;
 	struct node *next;
 }node_t;
+*/
+struct node{
+	int data; 
+	struct node *next;
+};
+typedef struct node node_t;
 
-typedef void (*callback)(node_t* data);
+void display(node_t* n){
+    if(n != NULL)
+        printf("%d ", n->data);
+}
 
 node_t* create(int data,node_t* next){
     node_t* new_node = malloc(sizeof(node_t));
@@ -29,13 +38,23 @@ node_t* create(int data,node_t* next){
  
     return new_node;
 }
-
 void print_list(node_t * head){
 	node_t * current = head;
 	while(current!=NULL){
 		printf("%d\n",current->data);
 		current = current->next;
 	}
+}
+node_t* transform(int a[],int size){
+	node_t* head = create(a[0],NULL);
+	node_t* temp = head;
+	for(int i = 1; i < size; i++){
+		node_t* t = create(a[i],NULL);
+		temp->next = t;
+		
+		temp = temp->next;
+	}
+	return head;
 }
 
 void push(node_t* head, int data){
@@ -50,10 +69,6 @@ void push(node_t* head, int data){
     cursor->next->next = NULL;
 }
 
-void display(node_t* n){
-    if(n != NULL)
-        printf("%d ", n->data);
-}
 
 int count(node_t* head){
     node_t *cursor = head;
@@ -149,18 +164,24 @@ void  sort(){
 	bsp_push_reg(localSample, (P+1)*sizeof(int));
 
 	//Sharing local sample with all processor
+	
+	bsp_sync();
+	node_t* localSampleList = transform(localSample,P+1);
+	bsp_sync();
+	print_list(localSampleList);
+
+
 	node_t * p0 = calloc(P+1, sizeof(int));
 	node_t * p1 = calloc(P+1, sizeof(int));
 	node_t * p2 = calloc(P+1, sizeof(int));
 	node_t * p3 = calloc(P+1, sizeof(int));
-	bsp_sync();
-
 
 	bsp_get(0,localSample,0,p0,(P+1)*sizeof(int));
 	bsp_get(1,localSample,0,p1,(P+1)*sizeof(int));
 	bsp_get(2,localSample,0,p2,(P+1)*sizeof(int));
 	bsp_get(3,localSample,0,p3,(P+1)*sizeof(int));
 	bsp_sync();
+
 
 
 
