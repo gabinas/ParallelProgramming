@@ -37,6 +37,17 @@ void print_list(node_t * head){
 	}
 }
 
+void append(node_t* head, int data){
+    /* go to the last node */
+    node_t *cursor = head;
+    while(cursor->next != NULL)
+        cursor = cursor->next;
+ 
+    /* create a new node */
+    node_t* new_node =  create(data,NULL);
+    cursor->next = new_node;
+}
+
 void push(node_t* head, int data){
     /* go to the last node */
     node_t *cursor = head;
@@ -57,8 +68,7 @@ void display(node_t* n){
 int count(node_t* head){
     node_t *cursor = head;
     int c = 0;
-    while(cursor != NULL)
-    {
+    while(cursor != NULL){
         c++;
         cursor = cursor->next;
     }
@@ -123,6 +133,41 @@ int cmpfunc(const void * a, const void * b){
 	return ( *(int*)a - *(int*)b );
 }
 
+node_t* transform(int a[],int size){
+	node_t* head = create(a[0],NULL);
+	node_t* temp = head;
+	for(int i = 1; i < size; i++){
+		node_t* t = create(a[i],NULL);
+		temp->next = t;
+		
+		temp = temp->next;
+	}
+	return head;
+}
+
+node_t* merge(node_t * l0, node_t * l1){
+	node_t * merge = malloc(sizeof(node_t));
+	while(count(l0) > 0 & count(l1) > 0){
+		if(l0->data < l1->data){
+			append(merge,l0->data);
+			l0 = l0->next; 
+		}else{
+			append(merge,l1->data);
+			l1 = l1->next;
+		}
+	}
+
+	while(count(l0) > 0){
+		append(merge, l0->data);
+		l0 = l0->next;
+	}
+	while(count(l1) > 0){
+		append(merge, l1->data);
+		l1 = l1->next;
+	}
+	return merge; 
+}
+
 void  sort(){
 	bsp_begin(P);
 	
@@ -139,6 +184,7 @@ void  sort(){
 	qsort(arr, size, sizeof(int), cmpfunc);
 
 	//Storing Local Sample
+
 	int *localSample = calloc(P+1,sizeof(int));
 	localSample[0] = arr[0];
 	localSample[1] = arr[1];
@@ -146,35 +192,42 @@ void  sort(){
 	localSample[P-1] = arr[size-2];
 	localSample[P] = arr[size-1];
 	bsp_push_reg(localSample, (P+1)*sizeof(int));
-
-	//Sharing local sample with all processor
-	node_t * p0 = calloc(P+1, sizeof(int));
-	node_t * p1 = calloc(P+1, sizeof(int));
-	node_t * p2 = calloc(P+1, sizeof(int));
-	node_t * p3 = calloc(P+1, sizeof(int));
 	bsp_sync();
 
+	//Sharing local sample with all processor
+	int * p0 = calloc(P+1,sizeof(int));
+	int * p1 = calloc(P+1,sizeof(int));
+	int * p2 = calloc(P+1,sizeof(int));
+	int * p3 = calloc(P+1,sizeof(int));
 
+	//Receives all local samples as arrays
 	bsp_get(0,localSample,0,p0,(P+1)*sizeof(int));
 	bsp_get(1,localSample,0,p1,(P+1)*sizeof(int));
 	bsp_get(2,localSample,0,p2,(P+1)*sizeof(int));
 	bsp_get(3,localSample,0,p3,(P+1)*sizeof(int));
 	bsp_sync();
+	//converts them into lists for the merge
+	node_t * l0 = transform(p0,P+1);
+	node_t * l1 = transform(p1,P+1);
+	node_t * l2 = transform(p2,P+1);
+	node_t * l3 = transform(p3,P+1);
 
-	print_list(p0);
-	//push(p0,2);
+	node_t * merge1 = malloc(sizeof(node_t));
+	node_t * merge2 = malloc(sizeof(node_t));
+	node_t * merge3 = malloc(sizeof(node_t));
 
-	/*
-	for(int i = 0; i < P; i++){
-		bsp_put(i,localSample,LS,p*(P+1)*sizeof(int),(P+1)*sizeof(int));
-	}
-	bsp_sync();
-	*/
-	//Local Sample Merge
+	merge1 = merge(l0,l1);
+	merge2 = merge(l2,l3);
+	merge3 = merge(merge1,merge2);
 
-	/*
-	//qsort(LS, P*(P+1), sizeof(int), cmpfunc);
+	//toString(p,p0,P+1);
+	//toString(p,p1,P+1);
 
+	print_list(merge3);
+
+
+
+/*
 	//Pick Global Separators
 	int *global = calloc(P+1, sizeof(int));
 	global[0] = LS[0];
