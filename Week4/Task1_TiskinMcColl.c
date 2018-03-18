@@ -9,13 +9,18 @@ However, it only goes through the first phase and doesn't complete the second on
 Later on we fixed this by synchronizing the processors after the last loop.
 
 */
-
+/*
 typedef struct node{
 	int data;
 	struct node *next;
 }node_t;
+*/
+struct node{
+	int data; 
+	struct node *next;
+};
+typedef struct node node_t;
 
-typedef void (*callback)(node_t* data);
 
 node_t* create(int data,node_t* next){
     node_t* new_node = malloc(sizeof(node_t));
@@ -162,7 +167,7 @@ void  sort(){
 	bsp_get(3,localSample,0,p3,(P+1)*sizeof(int));
 	bsp_sync();
 
-
+	p0->next = 
 
 	//push(p0,2);
 
