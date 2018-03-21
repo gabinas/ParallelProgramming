@@ -48,18 +48,6 @@ void append(node_t* head, int data){
     cursor->next = new_node;
 }
 
-void push(node_t* head, int data){
-    /* go to the last node */
-    node_t *cursor = head;
-    while(cursor->next != NULL)
-        cursor = cursor->next;
- 
-    /* create a new node */
-    cursor->next = malloc(sizeof(node_t));
-   	cursor->next->data = data; 
-    cursor->next->next = NULL;
-}
-
 void display(node_t* n){
     if(n != NULL)
         printf("%d ", n->data);
@@ -218,6 +206,8 @@ void  sort(){
 
 	merge1 = merge(l0,l1);
 	merge2 = merge(l2,l3);
+	print_list(merge1);
+	print_list(merge2);
 	merge3 = merge(merge1,merge2);
 
 	//toString(p,p0,P+1);
