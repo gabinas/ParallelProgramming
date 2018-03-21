@@ -3,84 +3,6 @@
 #include "include/mcbsp.h"
 unsigned int P;
 
-/*
-This program is supposed to complete the Two-Phase broadcast. 
-However, it only goes through the first phase and doesn't complete the second one.
-Later on we fixed this by synchronizing the processors after the last loop.
-
-*/
-/*
-typedef struct node{
-	int data;
-	struct node *next;
-}node_t;
-*/
-struct node{
-	int data; 
-	struct node *next;
-};
-typedef struct node node_t;
-
-void display(node_t* n){
-    if(n != NULL)
-        printf("%d ", n->data);
-}
-
-node_t* create(int data,node_t* next){
-    node_t* new_node = malloc(sizeof(node_t));
-    if(new_node == NULL)
-    {
-        printf("Error creating a new node.\n");
-        exit(0);
-    }
-    new_node->data = data;
-    new_node->next = next;
- 
-    return new_node;
-}
-void print_list(node_t * head){
-	node_t * current = head;
-	while(current!=NULL){
-		printf("%d\n",current->data);
-		current = current->next;
-	}
-}
-node_t* transform(int a[],int size){
-	node_t* head = create(a[0],NULL);
-	node_t* temp = head;
-	for(int i = 1; i < size; i++){
-		node_t* t = create(a[i],NULL);
-		temp->next = t;
-		
-		temp = temp->next;
-	}
-	return head;
-}
-
-void push(node_t* head, int data){
-    /* go to the last node */
-    node_t *cursor = head;
-    while(cursor->next != NULL)
-        cursor = cursor->next;
- 
-    /* create a new node */
-    cursor->next = malloc(sizeof(node_t));
-   	cursor->next->data = data; 
-    cursor->next->next = NULL;
-}
-
-
-int count(node_t* head){
-    node_t *cursor = head;
-    int c = 0;
-    while(cursor != NULL)
-    {
-        c++;
-        cursor = cursor->next;
-    }
-    return c;
-}
-
 int * createArray(int pID, int size) {
 	int *dataAddress = calloc(size, sizeof(int));
 	if(pID == 0){
@@ -139,6 +61,35 @@ int cmpfunc(const void * a, const void * b){
 	return ( *(int*)a - *(int*)b );
 }
 
+int * merge(int a1[], int a2[], int size){
+	int c1 = 0,c2 = 0, m = 0;
+	int *merged = calloc(size*2,sizeof(int));
+	while(c1 < size && c2 < size){
+		if(a1[c1] > a2[c2]){
+			merged[m] = a2[c2];
+			m++;
+			c2++;
+		} else {
+			merged[m] = a1[c1];
+			m++;
+			c1++;
+		}
+	}
+
+	while(c1 < size){
+		merged[m] = a1[c1];
+		m++;
+		c1++;
+	}
+	while(c2 < size){
+		merged[m] = a2[c2];
+		m++;
+		c2++;
+	}
+
+	return merged;
+}
+
 void  sort(){
 	bsp_begin(P);
 	
@@ -155,6 +106,7 @@ void  sort(){
 	qsort(arr, size, sizeof(int), cmpfunc);
 
 	//Storing Local Sample
+
 	int *localSample = calloc(P+1,sizeof(int));
 	localSample[0] = arr[0];
 	localSample[1] = arr[1];
@@ -162,41 +114,23 @@ void  sort(){
 	localSample[P-1] = arr[size-2];
 	localSample[P] = arr[size-1];
 	bsp_push_reg(localSample, (P+1)*sizeof(int));
+	bsp_sync();
 
 	//Sharing local sample with all processor
-	
-	bsp_sync();
-	node_t* localSampleList = transform(localSample,P+1);
-	bsp_sync();
-	print_list(localSampleList);
+	int * p0 = calloc(P+1,sizeof(int));
+	int * p1 = calloc(P+1,sizeof(int));
+	int * p2 = calloc(P+1,sizeof(int));
+	int * p3 = calloc(P+1,sizeof(int));
 
-
-	node_t * p0 = calloc(P+1, sizeof(int));
-	node_t * p1 = calloc(P+1, sizeof(int));
-	node_t * p2 = calloc(P+1, sizeof(int));
-	node_t * p3 = calloc(P+1, sizeof(int));
-
+	//Receives all local samples as arrays
 	bsp_get(0,localSample,0,p0,(P+1)*sizeof(int));
 	bsp_get(1,localSample,0,p1,(P+1)*sizeof(int));
 	bsp_get(2,localSample,0,p2,(P+1)*sizeof(int));
 	bsp_get(3,localSample,0,p3,(P+1)*sizeof(int));
 	bsp_sync();
 
-
-
-
-	//push(p0,2);
-
-	/*
-	for(int i = 0; i < P; i++){
-		bsp_put(i,localSample,LS,p*(P+1)*sizeof(int),(P+1)*sizeof(int));
-	}
-	bsp_sync();
-	*/
 	//Local Sample Merge
-
-	/*
-	//qsort(LS, P*(P+1), sizeof(int), cmpfunc);
+	LS = merge(merge(p0,p1,P+1),merge(p2,p3,P+1),(P+1)*2);
 
 	//Pick Global Separators
 	int *global = calloc(P+1, sizeof(int));
@@ -207,30 +141,54 @@ void  sort(){
 	global[4] = LS[(int)(P*(P+1)-1)];
 
 	//Partition Local blocks according to global separators
-	int *partOne = calloc(40,sizeof(int));
-	int *partTwo = calloc(40,sizeof(int));
-	int *partThree = calloc(40,sizeof(int));
-	int *partFour = calloc(40,sizeof(int));
+	int *partOne = calloc(P+1,sizeof(int));
+	int *partTwo = calloc(P+1,sizeof(int));
+	int *partThree = calloc(P+1,sizeof(int));
+	int *partFour = calloc(P+1,sizeof(int));
+	int c1 = 0,c2 = 0,c3 = 0,c4 = 0;
 
-
-
-
-
-	/*
-	for(int i = 0; i < P+1; i++){
-		if(arr[i] > global[0] && arr[i] < global[1]){
-
-		}else if(arr[i] > global[1] && arr[i] < global[2]){
-
-		}else if(arr[i] > global[2] && arr[i] < global[3]){
-
-		}else if(arr[i] > global[3] && arr[i] < global[4]){
-
-		}else if(arr[i] > global[4]){
-
-		}
+	for(int i = 0; i < size; i++){
+		if(arr[i] <= global[1]){
+			partOne[c1] = arr[i];
+			c1++;
+		}else if(arr[i] <= global[2]){
+			partTwo[c2] = arr[i];
+			c2++;
+		}else if(arr[i] <= global[3]){
+			partThree[c3] = arr[i];
+			c3++;
+		}else {
+			partFour[c4] = arr[i];
+			c4++;
+		} 
 	}
-	*/
+
+	int **a = (int **)calloc(P,sizeof(int));
+	a[0] = (int *)calloc(40,sizeof(int));
+	a[1] = (int *)calloc(40,sizeof(int));
+	a[2] = (int *)calloc(40,sizeof(int));
+	a[3] = (int *)calloc(40,sizeof(int));
+
+	bsp_push_reg(a[0],(40)*sizeof(int));
+	bsp_push_reg(a[1],(40)*sizeof(int));
+	bsp_push_reg(a[2],(40)*sizeof(int));
+	bsp_push_reg(a[3],(40)*sizeof(int));
+	bsp_sync();
+
+	bsp_put(0,partOne,&a[0][p],0,c1*sizeof(int));
+	bsp_put(1,partTwo,&a[1][p],0,c2*sizeof(int));
+	bsp_put(2,partThree,&a[2][p],0,c3*sizeof(int));
+	bsp_put(3,partFour,&a[3][p],0,c4*sizeof(int));
+
+
+	bsp_sync();
+	/*
+	toString(p,list1,10);
+	toString(p,list2,10);
+	toString(p,list3,10);
+	toString(p,list4,10);
+*/
+
 	bsp_end();
 }
 	
