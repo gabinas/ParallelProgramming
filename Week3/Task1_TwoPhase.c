@@ -3,13 +3,6 @@
 #include "include/mcbsp.h"
 unsigned int P;
 
-/*
-This program is supposed to complete the Two-Phase broadcast. 
-However, it only goes through the first phase and doesn't complete the second one.
-Later on we fixed this by synchronizing the processors after the last loop.
-
-*/
-
 int * createArray(int size) {
 	int *dataAddress = calloc(size, sizeof(int));
 	for (int i = 0; i < size; i++){
