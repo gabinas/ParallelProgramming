@@ -70,14 +70,14 @@ void naiveBroadcast(){
 	Broad = calloc(n, sizeof(int));		//Saving space for array in p1-pn
 	bsp_push_reg(Broad, n*sizeof(int));	//Storing register for dynamic access
 	bsp_sync();	//first synchronize
-	Broadpoint=Broad;// creating a second pointer for the put operation this does not need to be done but it helped me while coding
+	Broadpoint=Broad;// creating a second pointer for the put operation this does not need to be done but it helps when reading the code
 	
 	
 	// 2
 	if(id==0){
 	bsp_put(0,arr,Broad,0,n*sizeof(int));//putting the array in proc 0 from variable array into global variable so that i dont have to change variable names in iterations of while loop.
 		
-		 key=datachecker(arr,Broad,n,id);
+		 key=datachecker(arr,Broad,n,id); //Ensuring the data transfer worked; not needed.
 		 
 		
 		
@@ -90,17 +90,17 @@ void naiveBroadcast(){
 	while(Procs>1){										
 	
 	
-	key=datachecker(Broadpoint,Broad,n,id);
+	key=datachecker(Broadpoint,Broad,n,id);       //checks if the processor has already revieved the data
 	
-	if(key==1){
-		bsp_put((id+(Procs/2)),Broadpoint,Broad,0,n*sizeof(int));
+	if(key==1){ 								//if the processor has the data it sends the data to another processor
+		bsp_put((id+(Procs/2)),Broadpoint,Broad,0,n*sizeof(int));   //The data gets sent to a processor which doesnt have the data
 		printf("processor %d has sent:\n",id);
 		toString(id,Broadpoint,n);
 		printf(" to processor %d\n",(id+(Procs/2)));
 	
 	}
-	Procs=Procs/2;
-	bsp_sync();
+	Procs=Procs/2;				//Each iteration the data get sent to procs/2 eventually all processors will have the data
+	bsp_sync();				//and the loop will end.
 	}
 	
 
