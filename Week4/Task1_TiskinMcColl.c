@@ -2,6 +2,14 @@
 #include <stdio.h>
 #include "include/mcbsp.h"
 unsigned int P;
+/*Note that for very long arrays the processes might overlap causing the arrays to be 
+*printed at the same time and therefore the ouput will be mixed arrays.
+
+Also note that this sort only works properly with non-repeated numbers
+
+
+*/
+
 
 int * createArray(int pID, int size) {
 	int *dataAddress = calloc(size, sizeof(int));
@@ -62,6 +70,7 @@ int cmpfunc(const void * a, const void * b){
 }
 
 int * merge(int a1[], int a2[], int size1, int size2){
+	//This method merges two sorted arrays into one sorted array
 	int c1 = 0,c2 = 0, m = 0;
 	int *merged = calloc(size1+size2,sizeof(int));
 	while(c1 < size1 && c2 < size2){

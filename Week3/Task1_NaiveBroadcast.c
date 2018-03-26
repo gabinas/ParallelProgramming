@@ -4,6 +4,10 @@
 #include "include/mcbsp.h"
 unsigned int P;
 
+/*Note that for very long arrays the processes might overlap causing the arrays to be 
+*printed at the same time and therefore the ouput will be mixed arrays.
+*/
+
 int * createArray(int size) {
 	int *dataAddress = calloc(size, sizeof(int));
 	for (int i = 0; i < size; i++){
@@ -36,7 +40,7 @@ void naiveBroadcast(){
 	bsp_sync();	//first synchronize
 	
 	// 2
-	if(p == 0){
+	if(p == 0){	//Processor 0 sends the array to all other processors
 		for(int i = 1; i < P; i++){
 			bsp_put(i,arr, Broad,0, n*sizeof(int));
 		}
