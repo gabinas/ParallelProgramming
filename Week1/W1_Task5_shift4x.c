@@ -95,7 +95,7 @@ bsp_end();
 int main( int argc, char ** argv ){
 	bsp_init(spmd_start,argc,argv);/*THis statement must always be the first statement if sequential programming is required before parallel*/
 	
-printf("how many processors do you want to use");fflush(stdout);
+printf("how many processors do you want to use (NOTE: For ideal results 4 processors must be used)");fflush(stdout);
 scanf("%d",&p);
 spmd_start();
 
