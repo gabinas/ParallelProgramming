@@ -3,6 +3,10 @@
 #include "include/mcbsp.h"
 unsigned int P;
 int cost=0;
+
+//This program is the same as task 1 but this one will give the value of how much data was sent.
+
+
 int * createArray(int size){
 	
 	int *dataAddress = calloc(size,sizeof(int));
@@ -105,7 +109,7 @@ void naiveBroadcast(){
 	
 	
 	while(Procs>=1){										
-	key=datachecker(Broadpoint,Broad,n,id);
+	key=datachecker(Broadpoint,Broad,n,id);					//checking for data and sending if not present in processor
 	if(key==1){
 		bsp_put((id+(Procs/2)),Broadpoint,Broad,0,n*sizeof(int));
 		printf("processor %d has sent:\n",id);
