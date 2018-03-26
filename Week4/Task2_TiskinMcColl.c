@@ -68,9 +68,9 @@ int * postProcess(int a[],int size,int B){
 void  sort(){
 	bsp_begin(P);
 	//Array Creation
-	int p = bsp_pid();
-	int size = 7;
-	int *arr;
+	int p = bsp_pid();	//variable to keep track of which processor is working
+	int size = 7;		//size of arrays
+	int *arr;			//Main Array
 	int B=100;			//Constant for turning array into a non-repeated values array
 	int *LS = calloc(P*(P+1),sizeof(int)); 
 	arr = createArray(p,size);
@@ -153,6 +153,7 @@ void  sort(){
 	int *m3 = merge(m1,m2,LengthIn[0]+LengthIn[1],LengthIn[2]+LengthIn[3]);
 	//DONE
 	bsp_sync();
+	//Return the values to original before processing
 	postProcess(m3,LengthIn[0]+LengthIn[1]+LengthIn[2]+LengthIn[3],B);
 	int i=0;
 	while(i < P){
