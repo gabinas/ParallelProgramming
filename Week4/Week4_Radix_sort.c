@@ -7,26 +7,26 @@ int P;
 
 
 
-typedef struct KEYVALUE{
+typedef struct KEYVALUE{\\this creates a key value pair data structure
 int value;
 int key;
 }KEYVALUE;
 
 
-int * createArray(int s) {
+int * createArray(int s) {\\creating array with random values
 	int j;
 	int i;
 	int num;
 	int num2;
 	int lock;
-	KEYVALUE *dataAddress = calloc(s, sizeof(int)*2);
-	for (i = 0; i < s-1; i++){
+	KEYVALUE *dataAddress = calloc(s, sizeof(int)*2);\\Allocation space dynamically dependent on user input
+	for (i = 0; i < s-1; i++){		\\This is generates random value
 		num = rand()%50;
 		dataAddress[i].value = num;
 		 num2=rand()%s; 
 		 lock=0;
 		 
-		for(j=0;j<s;j++){
+		for(j=0;j<s;j++){\\This is for random keys
 			if(dataAddress[j].key==num2){
 				i--;
 				lock=1;
@@ -68,14 +68,14 @@ void radixsort(){
 		
 	}
 	}
-	if(id==0){
+	if(id==0){			\\distributing blocks of the array to different processors
 		for(i=0;i<P;i++){
 		bsp_put(i,&data[i*blocksize],local,0,(blocksize*sizeof(int))*2);
 		}
 	}
 	bsp_sync();
-	
-	for(i=0;i<blocksize;i++){
+						
+	for(i=0;i<blocksize;i++){  \\Going through each key and placing it in a array inside processor zero
 		m=local[i].key;
 		
 		bsp_put(0,&local[i],sorted,m*8,8);
@@ -83,7 +83,7 @@ void radixsort(){
 	bsp_sync();
 	
 	
-	if(id==0){
+	if(id==0){				\\Printing key value pairs
 		printf("\nSORTED:\n");
 		for(i=0;i<size;i++){
 		printf(" [key,value] [%d,%d]\n",sorted[i].key,sorted[i].value);
@@ -117,7 +117,7 @@ int main(int argc, char ** argv){
         return EXIT_FAILURE;
     }
 	if((size%P)!=0){
-		printf("Sorry the size of %d and requested processors %d are not divisible data will be corrupted\n",size,P);
+		printf("Sorry the size of %d and requested processors %d are not divisible; data will be corrupted\n",size,P);
 		printf("Would you like to exit please type 1 for yes and 0 for no");
 		scanf("%d",&answer);
 	}
