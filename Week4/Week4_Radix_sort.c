@@ -7,20 +7,20 @@ int P;
 
 
 
-typedef struct KEYVALUE{\\this creates a key value pair data structure
+typedef struct KEYVALUE{//this creates a key value pair data structure
 int value;
 int key;
 }KEYVALUE;
 
 
-int * createArray(int s) {\\creating array with random values
+int * createArray(int s) {//creating array with random values
 	int j;
 	int i;
 	int num;
 	int num2;
 	int lock;
-	KEYVALUE *dataAddress = calloc(s, sizeof(int)*2);\\Allocation space dynamically dependent on user input
-	for (i = 0; i < s-1; i++){		\\This is generates random value
+	KEYVALUE *dataAddress = calloc(s, sizeof(int)*2);//Allocation space dynamically dependent on user input
+	for (i = 0; i < s-1; i++){		//This is generates random value
 		num = rand()%50;
 		dataAddress[i].value = num;
 		 num2=rand()%s; 
@@ -33,7 +33,7 @@ int * createArray(int s) {\\creating array with random values
 				break;
 			}
 		}
-		if(lock==0){			\\This lock is to ensure that all keys are unique.
+		if(lock==0){			//This lock is to ensure that all keys are unique.
 			dataAddress[i].key=num2;
 		}
 		}
@@ -68,14 +68,14 @@ void radixsort(){
 		
 	}
 	}
-	if(id==0){			\\distributing blocks of the array to different processors
+	if(id==0){			//distributing blocks of the array to different processors
 		for(i=0;i<P;i++){
 		bsp_put(i,&data[i*blocksize],local,0,(blocksize*sizeof(int))*2);
 		}
 	}
 	bsp_sync();
 						
-	for(i=0;i<blocksize;i++){  \\Going through each key and placing it in a array inside processor zero
+	for(i=0;i<blocksize;i++){  //Going through each key and placing it in a array inside processor zero
 		m=local[i].key;
 		
 		bsp_put(0,&local[i],sorted,m*8,8);
@@ -83,7 +83,7 @@ void radixsort(){
 	bsp_sync();
 	
 	
-	if(id==0){				\\Printing key value pairs
+	if(id==0){				//Printing key value pairs
 		printf("\nSORTED:\n");
 		for(i=0;i<size;i++){
 		printf(" [key,value] [%d,%d]\n",sorted[i].key,sorted[i].value);
