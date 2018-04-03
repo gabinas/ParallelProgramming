@@ -131,7 +131,6 @@ void  kMeans(){
 			if((temp = dif(centroids[j],arr[i])) < min){
 				minIdx = j;
 				min = temp;
-
 			}
 		}
 		clusters[i] = minIdx;
@@ -148,84 +147,7 @@ void  kMeans(){
 		toStringDouble(p,centroids,k);
 	}
 }
-	//Storing Local Sample
-	/*
-	bsp_push_reg(localSample, (P+1)*sizeof(int));
-	bsp_sync();
 
-	//Sharing local sample with all processor
-	int * p0 = calloc(P+1,sizeof(int));
-	int * p1 = calloc(P+1,sizeof(int));
-	int * p2 = calloc(P+1,sizeof(int));
-	int * p3 = calloc(P+1,sizeof(int));
-
-	//Receives all local samples as arrays
-	bsp_get(0,localSample,0,p0,(P+1)*sizeof(int));
-	bsp_get(1,localSample,0,p1,(P+1)*sizeof(int));
-	bsp_get(2,localSample,0,p2,(P+1)*sizeof(int));
-	bsp_get(3,localSample,0,p3,(P+1)*sizeof(int));
-	bsp_sync();
-
-	//Local Sample Merge
-	LS = merge( merge(p0,p1,P+1,P+1) , merge(p2,p3,P+1,P+1) , (P+1)*2 , (P+1)*2 );
-
-	//Pick Global Separators
-	int *global = calloc(P+1, sizeof(int));
-	global[0] = LS[0];
-	global[1] = LS[(int)(P*(P+1)/4)];
-	global[2] = LS[(int)(2*P*(P+1)/4)];
-	global[3] = LS[(int)(3*P*(P+1)/4)];
-	global[4] = LS[(int)(P*(P+1)-1)];
-
-	//Partition Local blocks according to global separators
-	int Route[P][size];	//Will store all partitions of the array into processors
-	int *Length = calloc(P,sizeof(int)); //Length of each of the arrays in Route
-
-	for(int i = 0; i < size; i++){
-		if(arr[i] <= global[1]){
-			Route[0][Length[0]] = arr[i];
-			Length[0]++;
-		}else if(arr[i] <= global[2]){
-			Route[1][Length[1]] = arr[i];
-			Length[1]++;
-		}else if(arr[i] <= global[3]){
-			Route[2][Length[2]] = arr[i];
-			Length[2]++;
-		}else {
-			Route[3][Length[3]] = arr[i];
-			Length[3]++;
-		} 
-	}
-
-	//Variables used for the exchange of data
-	int RouteIn[P][size];
-	int *LengthIn = calloc(P,sizeof(int));
-	//Registers
-	bsp_push_reg(RouteIn,sizeof(int)*P*size);
-	bsp_push_reg(LengthIn,sizeof(int)*P);
-	bsp_sync();
-	//Routing: sending the local data to the corresponding processor
-	for(int i = 0; i < P; i++){
-		bsp_put(i,&Length[i],LengthIn,p*sizeof(int),sizeof(int));
-		bsp_put(i,&Route[i],RouteIn,p*size*sizeof(int),sizeof(int)*size);
-	}
-	bsp_sync();
-	//Final merge of the arrays received in Routing 
-	int *m1 = merge(&RouteIn[0][0],&RouteIn[1][0],LengthIn[0],LengthIn[1]);
-	int *m2 = merge(&RouteIn[2][0],&RouteIn[3][0],LengthIn[2],LengthIn[3]);
-	int *m3 = merge(m1,m2,LengthIn[0]+LengthIn[1],LengthIn[2]+LengthIn[3]);
-	//DONE
-	bsp_sync();
-	//Return the values to original before processing
-	postProcess(m3,LengthIn[0]+LengthIn[1]+LengthIn[2]+LengthIn[3],B);
-	int i=0;
-	while(i < P){
-		if(p==i)
-			toString(p,m3,LengthIn[0]+LengthIn[1]+LengthIn[2]+LengthIn[3]);
-		bsp_sync();
-		i++;
-	}
-*/
 	bsp_end();
 }
 	
