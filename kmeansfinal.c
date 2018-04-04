@@ -62,7 +62,7 @@ cluster *clusterinitializer(int k,int s){
 	cluster *buckets=calloc(k,sizeof(cluster));
 	int i,j;
 	for(i=0;i<k;i++){
-		buckets[i].clusterdata=calloc(s/2,sizeof(int));
+		buckets[i].clusterdata=calloc(s,sizeof(int));
 		buckets[i].clustersize=0;
 		}
 
@@ -111,7 +111,7 @@ void kmeans(){
 	
 	
 	if(id==0){
-		data=createArray(size,100);
+		data=createArray(size,range);
 		
 		for(i=0;i<procs;i++){
 			
@@ -120,9 +120,12 @@ void kmeans(){
 		}
 		bsp_sync();
 		for(i=0;i<length;i++){
-	centeroids[i]=rand()%range;
+	centeroids[i]=(range/block)*(i+1);
 	}
-
+	for(i=0;i<size;i++){
+		
+		printf("from proc %d data[%d]=%d\n",id,i,localdata[i]);
+		}
 
 
 
@@ -132,12 +135,15 @@ void kmeans(){
 			
 			if(iteration>0){
 			centroidcheck=getcenteroid(localsum,localsize,block,range);}
+			
+			
 			clust=clusterinitializer(length,size);
-		for(i=0;i<length;i++){
+		for(i=0;i<block;i++){
 		location=distance(localdata[i],centeroids,length);
 		clust[location].clusterdata[clust[location].clustersize]=localdata[i];
 		clust[location].clustersize+=1;
 		}
+		
 
 	for(i=0;i<length;i++){
 		printf("From proc %d At centeroid %d : %d\n",id,i,centeroids[i]);
@@ -149,8 +155,8 @@ void kmeans(){
  
 
 												
-												//I had to do this because it wouldn't initialize the values to 0 on processor 0 cluster 0
-												//This may be a bug and to reproduce just block comment this code.
+										//I had to do this because it wouldn't initialize the values to 0 on processor 0 cluster 0
+										//This may be a bug and to reproduce just block comment this code.
 	for(i=0;i<length;i++){
 		for(j=0;j<procs;j++){
 		*(sum+i*procs+j)=0;
@@ -209,16 +215,16 @@ bsp_sync();
 
 	
 		}
-		int m;
+		
 			for(i=0;i<length;i++){
 				if(clust[i].clustersize>0){
 		printf("From proc %d At centeroid %d : %d\n",id,i,centeroids[i]);
-		for(m=0;m<procs;m++){
-			if(id==m){
+		
+			
 		for(j=0;j<clust[i].clustersize;j++){
 			
 		printf("data[%d][%d] = %d\n",i,j,clust[i].clusterdata[j]);
-		}}}}
+		}}
 }
 		bsp_pop_reg(localdata);
 	bsp_pop_reg(sum);
