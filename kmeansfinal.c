@@ -122,10 +122,7 @@ void kmeans(){
 		for(i=0;i<length;i++){
 	centeroids[i]=(range/block)*(i+1);
 	}
-	for(i=0;i<size;i++){
-		
-		printf("from proc %d data[%d]=%d\n",id,i,localdata[i]);
-		}
+
 
 
 
