@@ -125,18 +125,14 @@ void kmeans(){
 
 
 
-	/* bsp_pop_reg(localdata);
-	bsp_pop_reg(sum);
-	bsp_pop_reg(clustsize);
-	bsp_sync(); */
+
 		
 		while(lock<length){
 			
 			
 			if(iteration>0){
 			centroidcheck=getcenteroid(localsum,localsize,block,range);}
-			
-		clust=clusterinitializer(length,size);
+			clust=clusterinitializer(length,size);
 		for(i=0;i<length;i++){
 		location=distance(localdata[i],centeroids,length);
 		clust[location].clusterdata[clust[location].clustersize]=localdata[i];
@@ -179,12 +175,13 @@ bsp_sync();
 	
 	bsp_sync(); 
 
+	if(id==0){
 	for(i=0;i<length;i++){
 		printf("From proc %d\n",id);
 		for(j=0;j<procs;j++){
 		printf("cluster[%d].p[%d] = %d and clustersize = %d\n",i,j,*(sum + i*procs + j),*(clustsize+i*procs+j));
 			}
-	}
+	}}
 	bsp_sync();
 	localsum=calloc(length,sizeof(int));
 	localsize=calloc(length,sizeof(int));
@@ -193,31 +190,40 @@ bsp_sync();
 			localsum[i]+=*(sum+i*procs+j);
 			localsize[i]+=*(clustsize+i*procs+j);
 			}}
+			if(id==0){
 	for(i=0;i<length;i++){
 		printf("localsum[%d] =%d and localsize[%d]=%d\n",i,localsum[i],i,localsize[i]);
-		}
+			}}
 		
 		
 		centeroids=getcenteroid(localsum,localsize,block,range);
 		lock=centroidchecker(centroidcheck,centeroids,length);
 		iteration+=1;
-	
+	if(id==0){
 	for(i=0;i<length;i++){
 		printf("centeroids[%d] =%d\n",i,centeroids[i]);
-		}
+	}}
 		
 		
 		bsp_sync();
 
 	
 		}
+		int m;
 			for(i=0;i<length;i++){
+				if(clust[i].clustersize>0){
 		printf("From proc %d At centeroid %d : %d\n",id,i,centeroids[i]);
+		for(m=0;m<procs;m++){
+			if(id==m){
 		for(j=0;j<clust[i].clustersize;j++){
+			
 		printf("data[%d][%d] = %d\n",i,j,clust[i].clusterdata[j]);
-			}
+		}}}}
 }
-	
+		bsp_pop_reg(localdata);
+	bsp_pop_reg(sum);
+	bsp_pop_reg(clustsize);
+	bsp_sync(); 
 	
 	bsp_end();
 
